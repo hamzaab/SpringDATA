@@ -17,7 +17,6 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/provider/")
-
 public class ProviderController {
 	@Autowired
 	private final ProviderRepository providerRepository;
@@ -29,53 +28,55 @@ public class ProviderController {
 
 	@GetMapping("list")
 	public String listProviders(Model model) {
-		model.addAttribute("providers", providerRepository.findAll());
+		List<Provider> lp = (List<Provider>) providerRepository.findAll();
+		if (lp.size() == 0)
+			lp = null;
+		System.out.println(lp);
+		model.addAttribute("providers", lp);
 		return "provider/listProviders";
 	}
 
-	
 	@GetMapping("add")
 	public String showAddProviderForm(Model model) {
-	Provider provider = new Provider();// object dont la valeur des attributs par defaut
-	model.addAttribute("provider", provider);
-	return "provider/addProvider";
+		Provider provider = new Provider();// object dont la valeur des attributs par defaut
+		model.addAttribute("provider", provider);
+		return "provider/addProvider";
 	}
-	
-	
+
 	@PostMapping("add")
 	public String addProvider(@Valid Provider provider, BindingResult result, Model model) {
-	if (result.hasErrors()) {
-	return "provider/addProvider";
+		if (result.hasErrors()) {
+			return "provider/addProvider";
+		}
+		providerRepository.save(provider);
+		return "redirect:list";
 	}
-	providerRepository.save(provider);
-	return "redirect:list";
-	}
-	
-	
+
 	@GetMapping("delete/{id}")
 	public String deleteProvider(@PathVariable("id") long id, Model model) {
-	//long id2 = 100L;
-	Provider provider = providerRepository.findById(id)
-	.orElseThrow(()-> new IllegalArgumentException("Invalid provider Id:" + id));
-	System.out.println("suite du programme...");
-	providerRepository.delete(provider);
-	/*model.addAttribute("providers", providerRepository.findAll());
-	return "provider/listProviders";*/
-	return "redirect:../list";
+		// long id2 = 100L;
+		Provider provider = providerRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid provider Id:" + id));
+		System.out.println("suite du programme...");
+		providerRepository.delete(provider);
+		/*
+		 * model.addAttribute("providers", providerRepository.findAll()); return
+		 * "provider/listProviders";
+		 */
+		return "redirect:../list";
 	}
-	
+
 	@GetMapping("edit/{id}")
 	public String showProviderFormToUpdate(@PathVariable("id") long id, Model model) {
 		Provider provider = providerRepository.findById(id)
-		.orElseThrow(()->new IllegalArgumentException("Invalid provider Id:" + id));
+				.orElseThrow(() -> new IllegalArgumentException("Invalid provider Id:" + id));
 		model.addAttribute("provider", provider);
 		return "provider/updateProvider";
-		}
-	
-	
+	}
+
 	@PostMapping("update")
 	public String updateProvider(@Valid Provider provider, BindingResult result, Model model) {
-	providerRepository.save(provider);
-	return"redirect:list";
+		providerRepository.save(provider);
+		return "redirect:list";
 	}
 }

@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 
+import org.hibernate.validator.constraints.Length;
+
 @Entity
 public class Provider {
 	@Id
@@ -14,6 +16,7 @@ public class Provider {
 	private long id;
 	@NotBlank(message = "Name is mandatory")
 	@Column(name = "name")
+	@Length(min = 3, max = 15)
 	private String name;
 	@NotBlank(message = "Address is mandatory")
 	@Column(name = "address")
